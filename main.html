@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Popup</title>
+        <style>
+            body{
+                font:1em papyrus;
+            }
+            .modal{
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgb(0,0,0);
+                background-color: rgba(0,0,0,0.4);
+            }
+            .modal-content{
+                background-color: white;
+                margin: 5% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 500px;
+                height: 600px;
+                position: relative;
+            }
+            .grid{
+
+                transform: translate(-0px, -508px);
+                z-index: 2;
+                display: grid;
+                grid-template-columns: auto auto auto auto;
+                grid-template-rows: auto auto auto auto;
+                height: 500px;
+                width: 500px;
+                
+            }
+            .grid-item{
+                z-index: 2;
+                background-color: rgba(0,0,0,0);
+                padding: 20px;
+                border: 1px solid rgb(0,0,0);
+            }
+            .move-up{
+                transform: translate(0px, -500px);
+            }
+        </style>
+    </head>
+    <body>
+        <img id = "check" src="unchecked.png" alt = "Image" style="width: 20px;height:20px;">
+        <button id="mopen">I am not a robot</button>
+        <div id="RobotModal" class="modal">
+            <div class="modal-content">
+                <img id = "roboImage" src="img1.jpg" alt = "Image" style="width: 500px;height:500px;">
+                <div class="grid">
+                    <div id = "1" class="grid-item"></div>
+                    <div id = "2" class="grid-item"></div>
+                    <div id = "3" class="grid-item"></div>
+                    <div id = "4" class="grid-item"></div>
+                    <div id = "5" class="grid-item"></div>
+                    <div id = "6" class="grid-item"></div>
+                    <div id = "7" class="grid-item"></div>
+                    <div id = "8" class="grid-item"></div>
+                    <div id = "9" class="grid-item"></div>
+                    <div id = "10" class="grid-item"></div>
+                    <div id = "11" class="grid-item"></div>
+                    <div id = "12" class="grid-item"></div>
+                    <div id = "13" class="grid-item"></div>
+                    <div id = "14" class="grid-item"></div>
+                    <div id = "15" class="grid-item"></div>
+                    <div id = "16" class="grid-item"></div>
+                </div>
+                <p id = "prompt" class = "move-up">Select all images with a red umbrella</p>
+                <button id = "verify" class = "move-up">Verify</button>
+            </div>
+        </div>
+        <script>
+            var listOfPasswords = ["0000011000000000", "0000011001100000", "0000000001000100", "0001000010000100", "0000000000001001", "complete"];
+            var listOfImages = ["img1.jpg", "nose.jpg", "wally.jpg", "shock.gif", "birds.jpg"];
+            var listOfPrompts = ["Select all squares with a red umbrella", "Select all Squares with a nose", "Select all squares with Wally", "Select all squares where I am shocked", "Select all squares with my favourite bird"];
+            var password = "0000000000000000";
+            let currentPassword = "0000011000000000";
+            let lvl = 0;
+            var modal = document.getElementById("RobotModal");
+            var btn = document.getElementById("mopen");
+            var verifyBtn = document.getElementById("verify");
+            var gridItems = document.querySelectorAll(".grid-item");
+            btn.onclick = function(){
+                modal.style.display = "block";
+            }
+            window.onclick = function(event){
+                if(event.target == modal){
+                    modal.style.display = "none";
+                }
+            }
+            function turnOn(){
+                this.style.backgroundColor = "rgba(83,173,203,0.3)";
+                this.addEventListener("click", turnOff);
+                this.removeEventListener('click', turnOn);
+                let num = Number(this.id);
+                let newPass = password.substring(0,num - 1) + 1 + password.substring(num);
+                password = newPass;
+                
+            }
+            function turnOff(){
+                this.style.backgroundColor = "rgba(0,0,0,0)";
+                this.addEventListener("click", turnOn);
+                this.removeEventListener('click', turnOff);
+                let num = Number(this.id);
+                let newPass = password.substring(0,num - 1) + 0 + password.substring(num);
+                password = newPass;
+            }
+            gridItems.forEach(function(item){
+                item.addEventListener("click", turnOn)
+            })
+            verifyBtn.onclick = function(){
+                if(password == currentPassword){
+                    lvl = lvl + 1;
+                    password = "0000000000000000"
+                    currentPassword = listOfPasswords[Number(lvl)];
+                    if(currentPassword == "complete"){
+                        document.getElementById("check").src = "checked.png";
+                        btn.onclick = null
+                        modal.style.display = "none";
+                    }
+                    document.getElementById("roboImage").src = listOfImages[Number(lvl)];
+                    document.getElementById("prompt").innerHTML = listOfPrompts[Number(lvl)];
+                    gridItems.forEach(function(item){
+                        item.style.backgroundColor = "rgba(0,0,0,0)";
+                        item.addEventListener("click", turnOn);
+                        item.removeEventListener('click', turnOff);  
+                    })
+                }
+            }
+        </script>
+    </body>
+</html>
